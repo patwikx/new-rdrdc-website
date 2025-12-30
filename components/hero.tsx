@@ -37,7 +37,7 @@ export function Hero() {
            animate={{ opacity: 1, y: 0 }}
            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
-           <h2 className="text-[2vw] font-light text-zinc-400 tracking-[0.2em] uppercase mt-4">
+           <h2 className="text-[2vw] font-light text-white-500 tracking-[0.2em] uppercase mt-4">
               Development Corporation
            </h2>
         </motion.div>
@@ -47,7 +47,7 @@ export function Hero() {
            animate={{ opacity: 1, y: 0 }}
            transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
-           <p className="text-xs md:text-sm font-medium text-zinc-500 tracking-[0.3em] uppercase mt-8">
+           <p className="text-xs md:text-sm font-medium text-white-500 tracking-[0.3em] uppercase mt-8">
               A Member of RD Group of Companies
            </p>
         </motion.div>

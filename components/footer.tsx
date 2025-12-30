@@ -41,7 +41,7 @@ export function Footer() {
         </div>
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-zinc-900 pt-12 text-xs uppercase tracking-widest text-zinc-600">
-           <p>© 2024 RD Realty Development Corp. All rights reserved.</p>
+           <p>© 2025 RD Realty Development Corp. All rights reserved.</p>
            <p>
               A member of <span className="text-zinc-400 font-bold">RD Group of Companies</span>
            </p>

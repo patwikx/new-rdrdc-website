@@ -15,7 +15,6 @@ import {
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-white selection:text-black">
-      <Navbar />
       
       <div className="grid lg:grid-cols-2 min-h-screen">
           <div className="pt-32 px-6 md:px-12 flex flex-col justify-between pb-12">

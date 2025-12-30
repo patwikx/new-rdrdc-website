@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Footer } from "@/components/footer";
 
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white selection:bg-white selection:text-black">
       <ScrollToTop />
-      <Navbar />
       <Hero />
       
       {/* Manifesto / Vision Section - High Contrast Typography */}
@@ -47,10 +48,10 @@ export default function HomePage() {
             </h2>
             <p className="text-xl md:text-2xl mb-12 max-w-xl mx-auto text-zinc-400">
                Your vision requires the perfect address. <br/>
-               Secure your space in GenSan's premier locations today.
+               Secure your space in General Santos City's premier locations today.
             </p>
-            <Button size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full h-16 px-12 text-lg">
-               Inquire Now
+            <Button asChild size="lg" className="bg-white text-black hover:bg-zinc-200 rounded-full h-16 px-12 text-lg">
+               <Link href="/contact">Inquire Now</Link>
             </Button>
          </div>
       </section>
