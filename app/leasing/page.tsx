@@ -12,7 +12,7 @@ export default function LeasingPage() {
            LEASING
         </h1>
         
-        <div className="grid lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
            <div className="lg:col-span-4">
               <p className="text-2xl text-zinc-400 sticky top-32">
                  Your journey to the perfect workspace begins here. Simple, transparent, and professional.

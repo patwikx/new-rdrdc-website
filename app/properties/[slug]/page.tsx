@@ -34,7 +34,7 @@ export default async function PropertySlugPage({ params }: PageProps) {
 
       {/* Content Grid */}
       <section className="py-24 container mx-auto px-6">
-         <div className="grid lg:grid-cols-12 gap-12 lg:gap-24">
+         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
             
             {/* Left: Description & Features */}
             <div className="lg:col-span-8">

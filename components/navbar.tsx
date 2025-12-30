@@ -35,9 +35,14 @@ export function Navbar() {
           className="w-10 h-10 object-contain"
           unoptimized
         />
-        <span className="text-lg md:text-xl font-bold tracking-tighter uppercase whitespace-nowrap">
-          RD Realty Development Corporation
-        </span>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold tracking-tighter uppercase whitespace-nowrap md:hidden">
+            RD Realty
+          </span>
+          <span className="hidden md:block text-lg md:text-xl font-bold tracking-tighter uppercase whitespace-nowrap">
+            RD Realty Development Corporation
+          </span>
+        </div>
       </Link>
 
       <div className="hidden md:flex items-center gap-12">

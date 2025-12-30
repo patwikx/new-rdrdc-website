@@ -14,7 +14,7 @@ export default function PropertiesPage() {
            Our <br/> Properties
         </h1>
         
-        <div className="grid md:grid-cols-2 gap-4 md:gap-8 mt-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-24">
            {properties.map((prop, i) => (
              <Link key={prop.id} href={`/properties/${prop.slug}`} className={`group relative aspect-[4/5] bg-zinc-900 overflow-hidden block ${i % 2 === 1 ? 'md:mt-24' : ''}`}>
                 <div 

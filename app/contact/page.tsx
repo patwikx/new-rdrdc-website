@@ -38,7 +38,7 @@ export default function ContactPage() {
                  </div>
               </div>
                   {/* Embedded Map */}
-                  <div className="mt-8 h-[500px] w-full bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+                  <div className="mt-8 h-[300px] md:h-[500px] w-full bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
                      <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d991.9!2d125.1807528!3d6.1088039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f79fa2a141eaa9%3A0xae033527655cd4a6!2sRD%20Realty%20Development%20Corporation!5e0!3m2!1sen!2sph!4v1703830000000!5m2!1sen!2sph" 
                         width="100%" 

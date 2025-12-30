@@ -15,7 +15,7 @@ export default function AboutPage() {
         </h1>
         <div className="w-full h-[1px] bg-white/20 mb-12" />
         
-        <div className="grid md:grid-cols-2 gap-16 md:gap-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-32">
            <div>
               <p className="text-2xl md:text-4xl font-light leading-tight">
                  We are the architects of <span className="text-zinc-500">commerce</span>. 

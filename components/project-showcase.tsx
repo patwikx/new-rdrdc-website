@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { properties } from "@/lib/data";
 import Link from "next/link";
@@ -49,12 +50,12 @@ export function ProjectShowcase() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
               
-              <div className="absolute inset-0 z-10 flex flex-col justify-end p-12 md:p-24">
-                <div className="max-w-4xl">
-                    <p className="text-zinc-400 text-sm md:text-base mb-4 uppercase tracking-[0.3em]">
-                    {project.category}
-                    </p>
-                    <h3 className="text-6xl md:text-9xl font-bold text-white mb-8 tracking-tighter loading-none">
+              <div className="absolute inset-0 z-10 flex flex-col justify-end items-end p-6 md:p-24 pb-32">
+                <div className="max-w-4xl text-right flex flex-col items-end">
+                    <Badge variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm mb-6 px-4 py-2 text-sm tracking-[0.2em] uppercase">
+                        {project.category}
+                    </Badge>
+                    <h3 className="text-6xl md:text-9xl font-bold text-white mb-8 tracking-tighter leading-none">
                     {project.name}
                     </h3>
                     <Button asChild className="bg-white text-black hover:bg-zinc-200 rounded-full px-8 py-6 text-lg tracking-widest uppercase cursor-pointer relative z-50">

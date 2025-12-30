@@ -148,8 +148,8 @@ export const properties: Property[] = [
   },
   {
     id: "5",
-    slug: "norfolk-pines",
-    name: "Norfolk Pines",
+    slug: "norfolk-pine",
+    name: "Norfolk Pine Residence",
     category: "Residential",
     location: "Various Locations",
     description: "Quality affordable housing for every Filipino family. RD Homes builds communities with durability and comfort in mind, ensuring your investment lasts a lifetime.",
