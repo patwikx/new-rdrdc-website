@@ -250,8 +250,11 @@ export function ChatWidget() {
           </button>
         </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
+        {/* Messages Area - data-lenis-prevent stops Lenis from hijacking scroll */}
+        <div 
+          className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3"
+          data-lenis-prevent
+        >
           {messages.length === 0 && (
             <div className="text-center text-zinc-500 text-sm py-8">
               <p>👋 Hi! I&apos;m here to help you find the perfect space.</p>
