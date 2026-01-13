@@ -28,8 +28,16 @@ function buildPropertySummaries(): string {
       .map(u => `${u.name} (${u.size}, ${u.type})`)
       .join('; ');
     
-    return `${p.name} (${p.category}) - ${p.location}: ${p.description.substring(0, 150)}... Features: ${p.features.slice(0, 4).join(', ')}. ${availableUnits ? `Available: ${availableUnits}` : ''}`;
-  }).join('\n');
+    // Generate Google Maps link from coordinates
+    const mapsLink = `https://www.google.com/maps?q=${p.lat},${p.lng}`;
+    
+    return `${p.name} (${p.category})
+  Location: ${p.location}
+  Map: [View on Google Maps](${mapsLink})
+  Description: ${p.description.substring(0, 100)}...
+  Features: ${p.features.slice(0, 4).join(', ')}
+  ${availableUnits ? `Available: ${availableUnits}` : ''}`;
+  }).join('\n\n');
 }
 
 export async function POST(req: Request) {
@@ -100,6 +108,7 @@ RESPONSE RULES:
 • Only discuss RD Realty topics
 • Direct specific pricing/availability questions to leasing team
 • Use navigation links when directing users
+• ALWAYS include the Google Maps link when mentioning property locations
 ${conversationHistory}
 User asks: ${message}`;
 
