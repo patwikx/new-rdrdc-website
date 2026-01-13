@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google"; // Import Outfit
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Navbar } from "@/components/navbar";
+import { ChatProvider } from "@/components/chat-provider";
+import { ChatWidget } from "@/components/chat-widget";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,10 +57,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable}`}>
       <body className="min-h-screen flex flex-col antialiased">
-        <Navbar />
-        <SmoothScroll>
-          <main className="flex-1">{children}</main>
-        </SmoothScroll>
+        <ChatProvider>
+          <Navbar />
+          <SmoothScroll>
+            <main className="flex-1">{children}</main>
+          </SmoothScroll>
+          <ChatWidget />
+        </ChatProvider>
       </body>
     </html>
   );

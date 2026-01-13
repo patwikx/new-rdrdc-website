@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,9 +18,11 @@ export default function ContactPage() {
       <div className="grid lg:grid-cols-2 min-h-screen">
           <div className="pt-32 px-6 md:px-12 flex flex-col justify-between pb-12">
               <div>
-                  <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-none">
-                    GET IN TOUCH WITH US
-                  </h1>
+                  <div className="mb-8">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none">
+                      GET IN TOUCH WITH US
+                    </h1>
+                  </div>
                   <p className="text-xl text-zinc-400 max-w-md">
                       Have a project in mind? Looking for the perfect space? 
                       Let's start the conversation.
@@ -29,12 +30,22 @@ export default function ContactPage() {
                                 <div className="space-y-8 mt-12 lg:mt-0">
                  <div className="mt-4">
                     <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Visit Us</h3>
-                    <p className="text-lg">RD Realty Dev't Corporation, Cagampang Ext. Brgy Bula, <br/> General Santos City, Philippines, 9500</p>
+                    <p className="text-lg">RD Realty Dev't Corporation, Cagampang Ext. Brgy Bula, General Santos City, Philippines, 9500</p>
                  </div>
                  <div>
                     <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Contact</h3>
                     <p className="text-lg hover:text-zinc-300 transition-colors cursor-pointer">marketing@rdrealty.com.ph</p>
-                    <p className="text-lg">(083) 555-XXXX</p>
+                    <p className="text-lg">(083) 552-4435</p>
+                 </div>
+                 <div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Scan to Connect</h3>
+                    <div className="bg-white p-3 rounded-lg inline-block">
+                      <img 
+                        src="/XRNB.png" 
+                        alt="QR Code - Scan to connect with RD Realty" 
+                        className="w-32 h-32"
+                      />
+                    </div>
                  </div>
               </div>
                   {/* Embedded Map */}
