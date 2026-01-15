@@ -56,7 +56,11 @@ interface ChatWidgetState {
 
 **Responsibilities:**
 - Render floating action button (FAB) in bottom-right corner
+- Display floating label near FAB prompting users to click (e.g., "Click here for assistant")
+- Hide floating label when chat panel is open
 - Toggle chat panel open/closed
+- Display header with assistant name "Rea"
+- Show welcome greeting "Hi, I'm Rea..." when chat opens with no messages
 - Display message history with user/assistant distinction
 - Handle message input and submission
 - Show loading states during API calls
@@ -191,37 +195,43 @@ interface ChatAPIResponse {
 
 **Validates: Requirements 1.2**
 
-### Property 2: Message History Preservation
+### Property 2: Floating Label Visibility
+
+*For any* state of the Chat_Widget, the floating label should be visible when isOpen is false and hidden when isOpen is true.
+
+**Validates: Requirements 1.6, 1.7**
+
+### Property 3: Message History Preservation
 
 *For any* sequence of messages added to a Chat_Session, all messages should be retrievable in the same order they were added, and closing/reopening the widget should not affect the message history.
 
 **Validates: Requirements 2.2, 2.3, 2.4**
 
-### Property 3: Empty Message Rejection
+### Property 4: Empty Message Rejection
 
 *For any* string composed entirely of whitespace characters (including empty string), attempting to send it as a message should be rejected, and the messages array should remain unchanged.
 
 **Validates: Requirements 3.2**
 
-### Property 4: Message Transmission Integrity
+### Property 5: Message Transmission Integrity
 
 *For any* valid (non-empty, non-whitespace) message, sending it should result in the message being added to the history and an API call being made with the message content and conversation history.
 
 **Validates: Requirements 3.1, 3.4**
 
-### Property 5: API Error Handling
+### Property 6: API Error Handling
 
 *For any* API error response, the chatbot should set an error state with a user-friendly message and not add any assistant message to the history.
 
 **Validates: Requirements 3.5, 8.3**
 
-### Property 6: System Prompt Completeness
+### Property 7: System Prompt Completeness
 
 *For any* API request to the chat endpoint, the system prompt should contain all property names from the property data, contact information, and conversation boundary instructions.
 
 **Validates: Requirements 4.1, 8.4**
 
-### Property 7: Request Validation
+### Property 8: Request Validation
 
 *For any* request to the chat API route, requests missing the required 'message' field or with an invalid message type should be rejected with a 400 status code.
 
@@ -262,7 +272,11 @@ Unit tests will verify specific examples and edge cases:
 
 1. **Chat Widget Component**
    - Renders floating button in correct position
+   - Displays floating label with "Click here for assistant" text when closed
+   - Hides floating label when chat is open
    - Opens/closes on button click
+   - Displays header with assistant name "Rea"
+   - Shows welcome greeting "Hi, I'm Rea..." when opened with no messages
    - Displays close button when open
    - Shows loading indicator during API call
    - Displays error message on failure
@@ -293,34 +307,39 @@ Property-based tests will use a testing library (fast-check for TypeScript) to v
    - Verify state alternates correctly
    - Tag: **Feature: ai-chatbot, Property 1: Widget Toggle State Consistency**
 
-2. **Property 2: Message History Preservation**
+2. **Property 2: Floating Label Visibility**
+   - Generate random toggle states
+   - Verify label visibility matches inverse of isOpen state
+   - Tag: **Feature: ai-chatbot, Property 2: Floating Label Visibility**
+
+3. **Property 3: Message History Preservation**
    - Generate random message sequences
    - Verify all messages preserved after operations
-   - Tag: **Feature: ai-chatbot, Property 2: Message History Preservation**
+   - Tag: **Feature: ai-chatbot, Property 3: Message History Preservation**
 
-3. **Property 3: Empty Message Rejection**
+4. **Property 4: Empty Message Rejection**
    - Generate whitespace-only strings of various lengths
    - Verify all are rejected
-   - Tag: **Feature: ai-chatbot, Property 3: Empty Message Rejection**
+   - Tag: **Feature: ai-chatbot, Property 4: Empty Message Rejection**
 
-4. **Property 4: Message Transmission Integrity**
+5. **Property 5: Message Transmission Integrity**
    - Generate valid message strings
    - Verify message added and API called
-   - Tag: **Feature: ai-chatbot, Property 4: Message Transmission Integrity**
+   - Tag: **Feature: ai-chatbot, Property 5: Message Transmission Integrity**
 
-5. **Property 5: API Error Handling**
+6. **Property 6: API Error Handling**
    - Generate various error responses
    - Verify error state set correctly
-   - Tag: **Feature: ai-chatbot, Property 5: API Error Handling**
+   - Tag: **Feature: ai-chatbot, Property 6: API Error Handling**
 
-6. **Property 6: System Prompt Completeness**
+7. **Property 7: System Prompt Completeness**
    - Verify prompt contains all required elements
-   - Tag: **Feature: ai-chatbot, Property 6: System Prompt Completeness**
+   - Tag: **Feature: ai-chatbot, Property 7: System Prompt Completeness**
 
-7. **Property 7: Request Validation**
+8. **Property 8: Request Validation**
    - Generate invalid request payloads
    - Verify all rejected with 400
-   - Tag: **Feature: ai-chatbot, Property 7: Request Validation**
+   - Tag: **Feature: ai-chatbot, Property 8: Request Validation**
 
 ### Testing Tools
 

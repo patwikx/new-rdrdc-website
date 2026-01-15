@@ -14,11 +14,11 @@ const createIcon = (category: string) => {
     className: "bg-transparent",
     html: `
       <div class="relative flex items-center justify-center w-12 h-12">
-        <div class="absolute inset-0 bg-white rounded-full opacity-20 animate-ping"></div>
-        <div class="relative w-8 h-8 bg-white border-4 border-black rounded-full shadow-lg flex items-center justify-center text-xs font-bold text-black z-10">
-          <div class="w-2 h-2 bg-black rounded-full"></div>
+        <div class="absolute inset-0 bg-red-500 rounded-full opacity-30 animate-ping"></div>
+        <div class="relative w-8 h-8 bg-red-500 border-4 border-white rounded-full shadow-lg flex items-center justify-center text-xs font-bold text-white z-10">
+          <div class="w-2 h-2 bg-white rounded-full"></div>
         </div>
-        <div class="absolute -bottom-2 w-1 h-4 bg-black/50 blur-[2px]"></div>
+        <div class="absolute -bottom-2 w-1 h-4 bg-red-900/50 blur-[2px]"></div>
       </div>
     `,
     iconSize: [48, 48],
@@ -50,8 +50,8 @@ export default function LocationsMapRenderer() {
         style={{ height: '100%', width: '100%', background: '#09090b', outline: 'none' }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
         {properties.map((prop) => (

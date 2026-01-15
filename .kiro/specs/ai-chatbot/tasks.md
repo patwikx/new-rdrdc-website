@@ -89,9 +89,18 @@ This implementation plan breaks down the AI chatbot feature into discrete coding
     - Handle Enter key in input field
     - Handle Escape key to close widget
     - _Requirements: 1.5_
-  - [ ] 9.2 Add welcome message on first open
-    - Display initial greeting from assistant
-    - _Requirements: 2.1_
+  - [x] 9.2 Add floating label near chat button
+    - Display label with text "Click here for assistant" near the FAB
+    - Hide label when chat panel is open
+    - Style label to be visually appealing and non-intrusive
+    - _Requirements: 1.6, 1.7_
+  - [x] 9.3 Update chat header and welcome message with Rea branding
+    - Change header title from "RD Realty Assistant" to "Rea"
+    - Update welcome message to "Hi, I'm Rea! I'm here to help you find the perfect space."
+    - _Requirements: 1.8, 1.9_
+  - [ ]* 9.4 Write property test for floating label visibility
+    - **Property 2: Floating Label Visibility**
+    - **Validates: Requirements 1.6, 1.7**
 
 - [ ] 10. Final checkpoint - Ensure all tests pass
   - Run all unit tests and property tests

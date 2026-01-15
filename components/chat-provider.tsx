@@ -29,6 +29,12 @@ export interface ChatContextValue {
  * Session storage key for persisting messages
  */
 const STORAGE_KEY = 'rd-realty-chat-messages';
+const LAST_ACTIVITY_KEY = 'rd-realty-chat-last-activity';
+
+/**
+ * Inactivity timeout in milliseconds (5 minutes)
+ */
+const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
 /**
  * Generate a unique ID for messages
@@ -86,10 +92,48 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [error, setError] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load messages from sessionStorage on mount (client-side only)
+  /**
+   * Clear all messages and reset chat
+   */
+  const clearMessages = useCallback(() => {
+    setMessages([]);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(LAST_ACTIVITY_KEY);
+    }
+  }, []);
+
+  /**
+   * Update last activity timestamp
+   */
+  const updateLastActivity = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+    }
+  }, []);
+
+  /**
+   * Check if chat should be cleared due to inactivity
+   */
+  const checkInactivity = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const lastActivity = sessionStorage.getItem(LAST_ACTIVITY_KEY);
+      if (lastActivity) {
+        const elapsed = Date.now() - parseInt(lastActivity, 10);
+        if (elapsed >= INACTIVITY_TIMEOUT) {
+          clearMessages();
+        }
+      }
+    }
+  }, [clearMessages]);
+
+  // Load messages from sessionStorage on mount and check for inactivity
   // Requirement 2.2, 2.3, 2.4: Maintain conversation history within session
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Check inactivity first
+      checkInactivity();
+      
       const stored = sessionStorage.getItem(STORAGE_KEY);
       if (stored) {
         const loadedMessages = deserializeMessages(stored);
@@ -97,7 +141,18 @@ export function ChatProvider({ children }: ChatProviderProps) {
       }
       setIsHydrated(true);
     }
-  }, []);
+  }, [checkInactivity]);
+
+  // Set up inactivity timer - check every minute
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const intervalId = setInterval(() => {
+      checkInactivity();
+    }, 60 * 1000); // Check every minute
+
+    return () => clearInterval(intervalId);
+  }, [isHydrated, checkInactivity]);
 
   // Persist messages to sessionStorage whenever they change
   // Requirement 2.3: Preserve messages during page navigation
@@ -133,6 +188,9 @@ export function ChatProvider({ children }: ChatProviderProps) {
     if (trimmedContent.length === 0) {
       return;
     }
+
+    // Update last activity timestamp
+    updateLastActivity();
 
     // Clear any previous error
     setError(null);
@@ -197,7 +255,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages]);
+  }, [messages, updateLastActivity]);
 
   const value: ChatContextValue = {
     messages,

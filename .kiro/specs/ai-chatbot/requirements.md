@@ -27,6 +27,10 @@ This document defines the requirements for an AI-powered chatbot feature for the
 3. WHEN the chat interface is open, THE Chat_Widget SHALL display a close button to minimize the chat
 4. THE Chat_Widget SHALL persist its open/closed state during page navigation within the same session
 5. THE Chat_Widget SHALL be responsive and functional on both desktop and mobile devices
+6. THE Chat_Widget SHALL display a floating label near the chat button with text prompting users to click for assistant help (e.g., "Click here for assistant")
+7. WHEN the chat interface is open, THE floating label SHALL be hidden
+8. THE Chat_Widget header SHALL display the assistant name as "Rea"
+9. WHEN the chat interface opens with no messages, THE Chatbot SHALL display a welcome greeting introducing itself as "Rea" (e.g., "Hi, I'm Rea...")
 
 ### Requirement 2: Chat Session Management
 

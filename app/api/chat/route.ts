@@ -2,9 +2,15 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 import { properties } from '@/lib/data';
 
-// Initialize Gemini
+// Initialize Gemini - using flash-lite for lower token usage
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+const model = genAI.getGenerativeModel({ 
+  model: 'gemini-2.0-flash-lite',
+  generationConfig: {
+    maxOutputTokens: 256, // Limit response length to save tokens
+    temperature: 0.7,
+  }
+});
 
 /**
  * Contact information for RD Realty
@@ -13,10 +19,16 @@ const CONTACT_INFO = {
   company: 'RD Realty Development Corporation',
   address: 'Cagampang Ext. Brgy. Bula, General Santos City',
   phone: '+63 (83) 552-4435',
+  mobile: '+63 917 979 7502',
   email: 'marketing@rdrealty.com.ph',
-  website: 'www.rdrealty.com.ph',
-  officeHours: 'Monday to Saturday, 7:30 AM - 5:10 PM',
+  officeHours: 'Mon-Sat, 7:30 AM - 5:10 PM',
+  // Office coordinates from contact page
+  lat: 6.1088039,
+  lng: 125.1807528,
 };
+
+// Pre-computed office Google Maps link
+const OFFICE_MAPS_LINK = `https://www.google.com/maps?q=${CONTACT_INFO.lat},${CONTACT_INFO.lng}`;
 
 /**
  * Build condensed property summaries to reduce token usage
@@ -25,19 +37,38 @@ function buildPropertySummaries(): string {
   return properties.map(p => {
     const availableUnits = p.availableUnits
       .filter(u => u.status === 'Available')
-      .map(u => `${u.name} (${u.size}, ${u.type})`)
-      .join('; ');
+      .slice(0, 2) // Limit to 2 units per property
+      .map(u => `${u.name} (${u.size})`)
+      .join(', ');
     
-    // Generate Google Maps link from coordinates
     const mapsLink = `https://www.google.com/maps?q=${p.lat},${p.lng}`;
     
-    return `${p.name} (${p.category})
-  Location: ${p.location}
-  Map: [View on Google Maps](${mapsLink})
-  Description: ${p.description.substring(0, 100)}...
-  Features: ${p.features.slice(0, 4).join(', ')}
-  ${availableUnits ? `Available: ${availableUnits}` : ''}`;
-  }).join('\n\n');
+    return `• ${p.name} [${p.category}] - ${p.location}
+  Map: ${mapsLink}
+  Features: ${p.features.slice(0, 3).join(', ')}
+  ${availableUnits ? `Units: ${availableUnits}` : ''}`;
+  }).join('\n');
+}
+
+/**
+ * Limit conversation history to save tokens
+ * Keep only last 4 exchanges (8 messages)
+ */
+function limitHistory(history: Array<{ role: string; content: string }>): string {
+  if (history.length === 0) return '';
+  
+  // Keep only last 4 exchanges
+  const limited = history.slice(-8);
+  
+  // Truncate long messages
+  const formatted = limited.map(h => {
+    const content = h.content.length > 150 
+      ? h.content.substring(0, 150) + '...' 
+      : h.content;
+    return `${h.role === 'user' ? 'U' : 'Rea'}: ${content}`;
+  }).join('\n');
+  
+  return `\nRecent chat:\n${formatted}\n`;
 }
 
 export async function POST(req: Request) {
@@ -67,53 +98,44 @@ export async function POST(req: Request) {
       );
     }
 
-    // Build property summaries
     const propertySummaries = buildPropertySummaries();
+    const conversationHistory = limitHistory(history);
 
-    // Build conversation history string
-    const conversationHistory = history.length > 0
-      ? `\nPREVIOUS CONVERSATION:\n${history.map((h: { role: string; content: string }) => 
-          `${h.role === 'user' ? 'User' : 'Assistant'}: ${h.content}`
-        ).join('\n')}\n`
-      : '';
-
-    // Build system prompt - optimized for fewer tokens
-    const systemPrompt = `You are RD Realty Assistant, the Virtual Assitant for RD Realty Development Corporation in General Santos City, Philippines.
+    // Optimized system prompt - concise to save tokens
+    const systemPrompt = `You are Rea, the friendly AI assistant for RD Realty Development Corporation in General Santos City, Philippines.
 
 PROPERTIES:
 ${propertySummaries}
 
-CONTACT INFO:
-• Company: ${CONTACT_INFO.company}
-• Address: ${CONTACT_INFO.address}
-• Phone: ${CONTACT_INFO.phone}
-• Email: ${CONTACT_INFO.email}
-• Hours: ${CONTACT_INFO.officeHours}
+CONTACT:
+${CONTACT_INFO.company}
+📍 ${CONTACT_INFO.address}
+�️ Office Map: ${OFFICE_MAPS_LINK}
+�📱 ${CONTACT_INFO.mobile}
+📞 ${CONTACT_INFO.phone}
+✉️ ${CONTACT_INFO.email}
+🕐 ${CONTACT_INFO.officeHours}
 
-LEASING PROCESS:
-1. Inquire - Contact leasing team to discuss requirements
-2. View - Schedule a site visit
-3. Propose - Review lease proposal and terms
-4. Move In - Sign agreement and complete documentation
+LEASING: 1) Inquire → 2) View → 3) Propose → 4) Move In
 
-NAVIGATION:
-• Properties: [/properties](/properties)
-• Leasing Info: [/leasing](/leasing)
-• Contact Us: [/contact](/contact)
+LINKS: [Properties](/properties) | [Leasing](/leasing) | [Contact](/contact)
 
-RESPONSE RULES:
-• Keep responses concise (2-4 sentences)
-• Use bullet points (•) for lists
-• Be warm and helpful with Filipino hospitality
+RULES:
+• You are "Rea" - be warm, helpful, concise
+• Keep responses short (2-3 sentences max)
+• Use bullet points for lists
 • Only discuss RD Realty topics
-• Direct specific pricing/availability questions to leasing team
-• Use navigation links when directing users
-• ALWAYS include the Google Maps link when mentioning property locations
+• When asked for office location, use the Office Map link above
+• Include property Google Maps links when mentioning specific properties
+• Direct pricing questions to leasing team
+• Politely redirect off-topic questions
 ${conversationHistory}
-User asks: ${message}`;
+User: ${message}
+
+Rea:`;
 
     const result = await model.generateContent(systemPrompt);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
 
     return NextResponse.json({
@@ -131,8 +153,16 @@ User asks: ${message}`;
       );
     }
 
+    // Handle quota exceeded
+    if (error instanceof Error && error.message.toLowerCase().includes('quota')) {
+      return NextResponse.json(
+        { success: false, error: 'Service temporarily unavailable. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: "I'm having trouble connecting right now. Please try again later." },
+      { success: false, error: "I'm having trouble connecting right now. Please try again." },
       { status: 500 }
     );
   }

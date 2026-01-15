@@ -202,6 +202,40 @@ export function ChatWidget() {
 
   return (
     <>
+      {/* Floating Label - Requirement 1.6, 1.7 */}
+      <div
+        className={cn(
+          'fixed bottom-8 right-24 z-50',
+          'bg-zinc-800/90 backdrop-blur-sm text-white px-3 py-2 rounded-full shadow-lg',
+          'text-sm font-medium whitespace-nowrap',
+          'transition-all duration-300',
+          // Subtle pulse animation
+          'animate-[pulse-subtle_3s_ease-in-out_infinite]',
+          // Hide when chat is open
+          isOpen ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
+        )}
+        style={{
+          // Custom animation keyframes via inline style
+          animation: isOpen ? 'none' : 'pulse-subtle 3s ease-in-out infinite, float 2s ease-in-out infinite'
+        }}
+      >
+        <span className="flex items-center gap-1.5">
+          💬 Chat with Rea
+        </span>
+      </div>
+
+      {/* Animation keyframes */}
+      <style jsx>{`
+        @keyframes pulse-subtle {
+          0%, 100% { opacity: 0.9; }
+          50% { opacity: 1; }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+        }
+      `}</style>
+
       {/* Floating Action Button - Requirement 1.1 */}
       <button
         onClick={toggleChat}
@@ -236,8 +270,8 @@ export function ChatWidget() {
               <ChatIcon className="w-4 h-4 text-zinc-900" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">RD Realty Assistant</h3>
-              <p className="text-xs text-zinc-400">Ask me about our properties</p>
+              <h3 className="text-sm font-semibold text-white">RD Realtor • Rea</h3>
+              <p className="text-xs text-zinc-400">Your property assistant</p>
             </div>
           </div>
           {/* Close button - Requirement 1.3 */}
@@ -255,10 +289,23 @@ export function ChatWidget() {
           className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3"
           data-lenis-prevent
         >
+          {/* Welcome message as chat bubble - Requirement 1.9 */}
           {messages.length === 0 && (
-            <div className="text-center text-zinc-500 text-sm py-8">
-              <p>👋 Hi! I&apos;m here to help you find the perfect space.</p>
-              <p className="mt-2">Ask me about our properties, leasing process, or anything else!</p>
+            <div className="flex justify-start">
+              <div className="max-w-[85%] bg-zinc-800 text-white rounded-2xl rounded-bl-sm px-4 py-3 text-sm">
+                <p className="whitespace-pre-wrap break-words">
+                  👋 Hi, I&apos;m Rea! I&apos;m here to help you find the perfect space.
+                </p>
+                <p className="whitespace-pre-wrap break-words mt-2 text-zinc-400">
+                  Ask me about our properties, leasing process, or anything else!
+                </p>
+                <p className="mt-3 pt-2 border-t border-zinc-700 text-[10px] text-zinc-500">
+                  By chatting, you agree to our{' '}
+                  <a href="/rea-terms" className="text-zinc-400 hover:text-white underline">Terms</a>
+                  {' & '}
+                  <a href="/rea-privacy" className="text-zinc-400 hover:text-white underline">Privacy Policy</a>
+                </p>
+              </div>
             </div>
           )}
           
@@ -314,6 +361,12 @@ export function ChatWidget() {
             >
               <SendIcon className="w-4 h-4" />
             </Button>
+          </div>
+          {/* Terms and Privacy links */}
+          <div className="flex justify-center gap-2 mt-2 text-[10px] text-zinc-500">
+            <a href="/rea-terms" className="hover:text-zinc-300 transition-colors">Terms of Use</a>
+            <span>•</span>
+            <a href="/rea-privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</a>
           </div>
         </div>
       </div>
