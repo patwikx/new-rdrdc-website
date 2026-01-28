@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,50 +21,54 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 md:px-12 flex items-center justify-between text-white",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 md:px-12",
         scrolled
-          ? "bg-gradient-to-b from-black/90 to-transparent pb-12 pt-6"
-          : "bg-gradient-to-b from-black/60 to-transparent py-6"
+          ? "bg-zinc-950/80 backdrop-blur-xl py-3"
+          : "bg-transparent py-6"
       )}
     >
-      <Link href="/" className="flex items-center gap-3 z-50">
-        <Image
-          src="/rdrdc-logo.png"
-          alt="RD Realty Logo"
-          width={40}
-          height={40}
-          className="w-10 h-10 object-contain"
-          unoptimized
-        />
-        <div className="flex flex-col">
-          <span className="text-lg font-bold tracking-tighter uppercase whitespace-nowrap md:hidden">
-            RD Realty
-          </span>
-          <span className="hidden md:block text-lg md:text-xl font-bold tracking-tighter uppercase whitespace-nowrap">
-            RD Realty Development Corporation
-          </span>
+      <div className="max-w-[1800px] mx-auto flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-4 group z-50">
+          <div className="relative w-10 h-10 md:w-10 md:h-10 transition-transform duration-500 group-hover:scale-110">
+            <Image
+              src="/rdrdc-logo.png"
+              alt="RD Realty Logo"
+              fill
+              className="object-contain"
+              unoptimized
+            />
+          </div>
+          <div className="flex flex-col justify-center border-l border-zinc-800 pl-4 h-10 md:h-12">
+            <span className="text-base md:text-lg font-black tracking-tighter uppercase leading-[0.8] mb-1">
+              RD Realty
+            </span>
+            <span className="text-[10px] md:text-xs font-bold tracking-tighter uppercase leading-[0.8] text-zinc-500">
+              Dev&apos;t Corporation<span className="text-blue-500 ml-0.5">.</span>
+            </span>
+          </div>
+        </Link>
+
+        <div className="hidden lg:flex items-center gap-10">
+          {["About", "Leasing", "Properties", "Contact"].map((item) => (
+            <Link
+              key={item}
+              href={`/${item.toLowerCase()}`}
+              className="group relative py-2 text-[11px] font-bold uppercase tracking-[0.3em] text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              <span className="relative z-10">{item}</span>
+              <div className="absolute bottom-0 left-0 w-0 h-[1px] bg-blue-500 transition-all duration-500 ease-out group-hover:w-full" />
+            </Link>
+          ))}
         </div>
-      </Link>
 
-      <div className="hidden md:flex items-center gap-12">
-        {["About", "Leasing", "Properties", "Contact"].map((item) => (
-          <Link
-            key={item}
-            href={`/${item.toLowerCase()}`}
-            className="text-sm font-medium uppercase tracking-widest hover:underline underline-offset-4 decoration-white/50"
-          >
-            {item}
-          </Link>
-        ))}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <Button 
+        <div className="flex items-center gap-6">
+          <Button
             asChild
-            className="rounded-full bg-white text-black hover:bg-zinc-200 px-6 font-medium uppercase tracking-wider text-xs"
-        >
-          <Link href="/contact">Inquire</Link>
-        </Button>
+            className="rounded-none bg-white text-black hover:bg-zinc-200 px-8 h-12 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 shadow-lg shadow-black/20"
+          >
+            <Link href="/contact">Inquire Now</Link>
+          </Button>
+        </div>
       </div>
     </nav>
   );
