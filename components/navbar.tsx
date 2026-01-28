@@ -21,7 +21,7 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 md:px-12",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 md:px-12 text-white",
         scrolled
           ? "bg-zinc-950/80 backdrop-blur-xl py-3"
           : "bg-transparent py-6"
@@ -39,7 +39,7 @@ export function Navbar() {
             />
           </div>
           <div className="flex flex-col justify-center border-l border-zinc-800 pl-4 h-10 md:h-12">
-            <span className="text-base md:text-lg font-black tracking-tighter uppercase leading-[0.8] mb-1">
+            <span className="text-base md:text-lg font-black tracking-tighter uppercase leading-[0.8] mb-1 text-white">
               RD Realty
             </span>
             <span className="text-[10px] md:text-xs font-bold tracking-tighter uppercase leading-[0.8] text-zinc-500">

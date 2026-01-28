@@ -81,7 +81,7 @@ export function TenantTicker() {
                             key={idx}
                             className="flex items-center px-12 group cursor-default"
                         >
-                            <span className="text-3xl md:text-5xl font-black text-zinc-800 group-hover:text-white transition-all duration-500 tracking-tighter uppercase inline-flex items-center gap-12">
+                            <span className="text-3xl md:text-5xl font-black text-white uppercase inline-flex items-center gap-12">
                                 {tenant}
                                 <span className="w-3 h-3 rounded-full bg-blue-600 opacity-50 block" />
                             </span>
