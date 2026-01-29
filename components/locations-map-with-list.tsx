@@ -34,6 +34,7 @@ export function LocationsMapWithList() {
   const [filterByBounds, setFilterByBounds] = useState(false);
   const [mapStyle, setMapStyle] = useState<'street' | 'satellite' | 'hybrid'>('street');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isGeneratingRoute, setIsGeneratingRoute] = useState(false);
   const [viewport, setViewport] = useState({
     center: DEFAULT_MAP_CONFIG.defaultCenter,
     zoom: DEFAULT_MAP_CONFIG.defaultZoom,
@@ -142,8 +143,15 @@ export function LocationsMapWithList() {
   };
 
   const handleGenerateRoute = (property: DashboardProperty) => {
-    // MapLibre component now handles route generation internally
+    // Set loading state and trigger route generation
+    setIsGeneratingRoute(true);
     setRouteDestinationId(property.id);
+
+    // Clear loading state after a reasonable time
+    // The actual route generation happens in MapLibre component
+    setTimeout(() => {
+      setIsGeneratingRoute(false);
+    }, 5000);
   };
 
   // Get badge color based on property type
@@ -399,10 +407,23 @@ export function LocationsMapWithList() {
                         <div className="flex gap-2 pt-2">
                           <button
                             onClick={() => handleGenerateRoute(selectedProperty)}
-                            className="flex-1 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-2.5 text-xs font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                            disabled={isGeneratingRoute}
+                            className={`flex-1 flex items-center justify-center gap-2 text-white rounded-lg px-3 py-2.5 text-xs font-semibold transition-all duration-200 ${isGeneratingRoute
+                                ? 'bg-blue-500/70 cursor-wait'
+                                : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
+                              }`}
                           >
-                            <Route className="w-3.5 h-3.5" />
-                            Get Directions
+                            {isGeneratingRoute ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                Getting Location...
+                              </>
+                            ) : (
+                              <>
+                                <Route className="w-3.5 h-3.5" />
+                                Get Directions
+                              </>
+                            )}
                           </button>
                         </div>
                       </div>

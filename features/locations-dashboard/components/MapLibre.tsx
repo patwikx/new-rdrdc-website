@@ -428,15 +428,26 @@ export function MapLibre({
       if (!currentLocation) {
         try {
           toast.loading('Getting your location for directions...', { id: 'route-location' });
-          currentLocation = await getCurrentLocation();
+          const locationResult = await getCurrentLocation();
+          currentLocation = { lat: locationResult.lat, lng: locationResult.lng };
           setUserLocation(currentLocation);
-          toast.success('Location found!', { id: 'route-location' });
+
+          // Check if location came from IP (less accurate)
+          if (locationResult.isFromIP) {
+            toast.warning('Using approximate location', {
+              id: 'route-location',
+              description: 'GPS unavailable. Location based on IP may not be accurate.',
+              duration: 5000,
+            });
+          } else {
+            toast.success('Location found!', { id: 'route-location' });
+          }
         } catch (error) {
           console.error('Failed to get location for route:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unable to get your location';
           toast.error('Cannot get directions', {
             id: 'route-location',
-            description: errorMessage + '. Please click the locate button first.',
+            description: errorMessage,
           });
           return;
         }
@@ -569,7 +580,9 @@ export function MapLibre({
     setIsLocating(true);
 
     try {
-      const location = await getCurrentLocation();
+      const locationResult = await getCurrentLocation();
+      const location = { lat: locationResult.lat, lng: locationResult.lng };
+
       if (mapRef.current && location) {
         setUserLocation(location);
         mapRef.current.flyTo({
@@ -577,9 +590,18 @@ export function MapLibre({
           zoom: 15,
           essential: true,
         });
-        toast.success('Location found!', {
-          description: 'Map centered on your current location.',
-        });
+
+        // Show appropriate toast based on location source
+        if (locationResult.isFromIP) {
+          toast.warning('Using approximate location', {
+            description: 'GPS unavailable. Location based on IP may not be accurate.',
+            duration: 5000,
+          });
+        } else {
+          toast.success('Location found!', {
+            description: 'Map centered on your current location.',
+          });
+        }
       }
     } catch (error) {
       console.error('Failed to get user location:', error);
