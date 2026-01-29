@@ -85,23 +85,9 @@ export function MapLibre({
     setIsClient(true);
   }, []);
 
-  // Get user location on mount
-  useEffect(() => {
-    const getUserLocation = async () => {
-      try {
-        const location = await getCurrentLocation();
-        if (location) {
-          setUserLocation(location);
-        }
-      } catch (error) {
-        console.error('Failed to get user location:', error);
-        // Fallback to default location
-        setUserLocation(DEFAULT_MAP_CONFIG.defaultCenter);
-      }
-    };
-
-    getUserLocation();
-  }, [getCurrentLocation]);
+  // Note: We no longer auto-request location on mount
+  // Location is only requested when user clicks the locate button
+  // This prevents silent fallbacks to incorrect default locations
 
   // Initialize map
   useEffect(() => {
