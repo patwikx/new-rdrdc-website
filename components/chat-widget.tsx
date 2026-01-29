@@ -6,44 +6,65 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 /**
- * Parse markdown links and render as clickable elements
- * Converts [text](url) to clickable links
+ * Parse message content and render URLs as clickable links
+ * Handles both plain URLs and markdown-style [text](url) links
  */
 function parseMessageContent(content: string): React.ReactNode[] {
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  // Combined regex for both plain URLs and markdown links
+  // Plain URLs: https://... or http://...
+  // Markdown links: [text](url)
+  const combinedRegex = /(\[([^\]]+)\]\(([^)]+)\))|(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/g;
+
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let match;
   let keyIndex = 0;
 
-  while ((match = linkRegex.exec(content)) !== null) {
-    // Add text before the link
+  while ((match = combinedRegex.exec(content)) !== null) {
+    // Add text before the match
     if (match.index > lastIndex) {
       parts.push(content.slice(lastIndex, match.index));
     }
-    
-    // Add the link
-    const [, linkText, linkUrl] = match;
-    parts.push(
-      <a
-        key={keyIndex++}
-        href={linkUrl}
-        className="text-blue-400 hover:text-blue-300 underline"
-        target={linkUrl.startsWith('http') ? '_blank' : undefined}
-        rel={linkUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-      >
-        {linkText}
-      </a>
-    );
-    
+
+    if (match[1]) {
+      // Markdown link: [text](url)
+      const linkText = match[2];
+      const linkUrl = match[3];
+      parts.push(
+        <a
+          key={keyIndex++}
+          href={linkUrl}
+          className="text-blue-400 hover:text-blue-300 underline break-all"
+          target={linkUrl.startsWith('http') ? '_blank' : undefined}
+          rel={linkUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+        >
+          {linkText}
+        </a>
+      );
+    } else if (match[4]) {
+      // Plain URL
+      const url = match[4];
+      parts.push(
+        <a
+          key={keyIndex++}
+          href={url}
+          className="text-blue-400 hover:text-blue-300 underline break-all"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {url}
+        </a>
+      );
+    }
+
     lastIndex = match.index + match[0].length;
   }
-  
+
   // Add remaining text
   if (lastIndex < content.length) {
     parts.push(content.slice(lastIndex));
   }
-  
+
   return parts.length > 0 ? parts : [content];
 }
 
@@ -52,7 +73,7 @@ function parseMessageContent(content: string): React.ReactNode[] {
  */
 function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
-  
+
   return (
     <div
       className={cn(
@@ -177,7 +198,7 @@ export function ChatWidget() {
   const handleSubmit = async () => {
     const trimmed = inputValue.trim();
     if (trimmed.length === 0 || isLoading) return;
-    
+
     setInputValue('');
     await sendMessage(trimmed);
   };
@@ -285,7 +306,7 @@ export function ChatWidget() {
         </div>
 
         {/* Messages Area - data-lenis-prevent stops Lenis from hijacking scroll */}
-        <div 
+        <div
           className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3"
           data-lenis-prevent
         >
@@ -308,14 +329,14 @@ export function ChatWidget() {
               </div>
             </div>
           )}
-          
+
           {messages.map((message) => (
             <MessageBubble key={message.id} message={message} />
           ))}
-          
+
           {/* Loading indicator - Requirement 3.3 */}
           {isLoading && <LoadingIndicator />}
-          
+
           {/* Error message with retry */}
           {error && (
             <div className="flex flex-col items-center gap-2 py-2">
@@ -330,7 +351,7 @@ export function ChatWidget() {
               </Button>
             </div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
 

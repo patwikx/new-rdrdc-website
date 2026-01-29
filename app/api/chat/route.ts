@@ -6,6 +6,9 @@ const API_KEY = process.env.API_KEY || '';
 const BASE_URL = 'https://api.apifree.ai/v1';
 const MODEL = 'google/gemini-2.5-flash-lite';
 
+// Website base URL for property links
+const WEBSITE_URL = 'https://rdrealty.com.ph';
+
 /**
  * Contact information for RD Realty
  */
@@ -25,7 +28,7 @@ const CONTACT_INFO = {
 const OFFICE_MAPS_LINK = `https://www.google.com/maps?q=${CONTACT_INFO.lat},${CONTACT_INFO.lng}`;
 
 /**
- * Build condensed property summaries to reduce token usage
+ * Build detailed property summaries with clickable links
  */
 function buildPropertySummaries(): string {
   return properties.map(p => {
@@ -36,12 +39,50 @@ function buildPropertySummaries(): string {
       .join(', ');
 
     const mapsLink = `https://www.google.com/maps?q=${p.lat},${p.lng}`;
+    const propertyPageLink = `${WEBSITE_URL}/properties/${p.slug}`;
 
-    return `• ${p.name} [${p.category}] - ${p.location}
-  Map: ${mapsLink}
-  Features: ${p.features.slice(0, 3).join(', ')}
-  ${availableUnits ? `Units: ${availableUnits}` : ''}`;
-  }).join('\n');
+    return `• **${p.name}** [${p.category}]
+  📍 Location: ${p.location}
+  🗺️ View on Map: ${mapsLink}
+  🔗 Property Page: ${propertyPageLink}
+  ✨ Features: ${p.features.slice(0, 3).join(', ')}
+  ${availableUnits ? `🏢 Available: ${availableUnits}` : ''}`;
+  }).join('\n\n');
+}
+
+/**
+ * Build a summary of properties grouped by location with counts
+ */
+function buildLocationSummary(): string {
+  const locationMap: Record<string, { count: number; properties: string[] }> = {};
+
+  properties.forEach(p => {
+    // Normalize location to broader area
+    let area = p.location;
+
+    // Group by city/area
+    if (p.location.includes('General Santos') || p.location.includes('GenSan')) {
+      area = 'General Santos City';
+    } else if (p.location.includes('Polomolok')) {
+      area = 'Polomolok / GenSan Boundary';
+    } else if (p.location.includes('Tacurong')) {
+      area = 'Tacurong City, Sultan Kudarat';
+    } else if (p.location.includes('Isulan')) {
+      area = 'Isulan, Sultan Kudarat';
+    } else if (p.location.includes('Davao')) {
+      area = 'Davao City';
+    }
+
+    if (!locationMap[area]) {
+      locationMap[area] = { count: 0, properties: [] };
+    }
+    locationMap[area].count++;
+    locationMap[area].properties.push(p.name);
+  });
+
+  return Object.entries(locationMap)
+    .map(([area, data]) => `• ${area} — ${data.count} ${data.count === 1 ? 'property' : 'properties'}`)
+    .join('\n');
 }
 
 /**
@@ -93,36 +134,58 @@ export async function POST(req: Request) {
     }
 
     const propertySummaries = buildPropertySummaries();
+    const locationSummary = buildLocationSummary();
     const conversationHistory = limitHistory(history);
 
-    // Optimized system prompt - concise to save tokens
-    const systemPrompt = `You are Rea, the friendly AI assistant for RD Realty Development Corporation in General Santos City, Philippines.
+    // Conversational system prompt - natural and human-like
+    const systemPrompt = `You are Rea, a friendly and helpful virtual assistant for RD Realty Development Corporation. You chat naturally like a real person would - warm, casual, and easy to talk to.
 
-PROPERTIES:
+WHAT YOU KNOW:
+
+Our locations and property counts:
+${locationSummary}
+
+Property details:
 ${propertySummaries}
 
-CONTACT:
-${CONTACT_INFO.company}
-📍 ${CONTACT_INFO.address}
-🗺️ Office Map: ${OFFICE_MAPS_LINK}
-📱 ${CONTACT_INFO.mobile}
-📞 ${CONTACT_INFO.phone}
-✉️ ${CONTACT_INFO.email}
-🕐 ${CONTACT_INFO.officeHours}
+Office: ${CONTACT_INFO.address}
+Office Map: ${OFFICE_MAPS_LINK}
+Mobile: ${CONTACT_INFO.mobile} | Phone: ${CONTACT_INFO.phone}
+Email: ${CONTACT_INFO.email}
+Hours: ${CONTACT_INFO.officeHours}
 
-LEASING: 1) Inquire → 2) View → 3) Propose → 4) Move In
+YOUR PERSONALITY:
 
-LINKS: [Properties](/properties) | [Leasing](/leasing) | [Contact](/contact)
+You're like a friendly leasing agent having a casual chat. Speak naturally - the way you'd text a friend, not write a formal document.
 
-RULES:
-• You are "Rea" - be warm, helpful, concise
-• Keep responses short (2-3 sentences max)
-• Use bullet points for lists
-• Only discuss RD Realty topics
-• When asked for office location, use the Office Map link above
-• Include property Google Maps links when mentioning specific properties
-• Direct pricing questions to leasing team
-• Politely redirect off-topic questions`;
+IMPORTANT RULES:
+
+- DO NOT use markdown formatting like **bold** or bullet points with asterisks. Just write plain, natural sentences.
+- Break your message into short paragraphs with blank lines between them, like texting.
+- When someone asks about properties, casually mention we have locations in GenSan, Davao, Tacurong, and other areas. Ask which area they're interested in.
+- When giving a location, put the Google Maps link on its own line so they can tap it easily.
+- Keep responses short - 2 to 4 short paragraphs max.
+- For pricing, just say rates vary and give them the contact number to call.
+- Only talk about RD Realty stuff.
+
+EXAMPLE OF HOW TO RESPOND:
+
+User: "What properties do you have?"
+
+Good response:
+"Hey! We've got quite a few actually. 😊
+
+Most of our properties are in General Santos City - commercial buildings, malls, and office spaces. We also have properties in Davao, Tacurong, and Isulan.
+
+What type of space are you looking for? And which area works best for you?"
+
+BAD response (too robotic):
+"We have properties in the following locations:
+* General Santos City - 25 properties
+* Davao City - 1 property
+..."
+
+Be natural. Be helpful. Be human.`;
 
     // Build messages array for chat completions API
     const messages = [
@@ -135,7 +198,7 @@ RULES:
       for (const h of limitedHistory) {
         messages.push({
           role: h.role === 'user' ? 'user' : 'assistant',
-          content: h.content.length > 150 ? h.content.substring(0, 150) + '...' : h.content
+          content: h.content.length > 200 ? h.content.substring(0, 200) + '...' : h.content
         });
       }
     }
@@ -153,8 +216,8 @@ RULES:
       body: JSON.stringify({
         model: MODEL,
         messages: messages,
-        max_tokens: 256,
-        temperature: 0.7,
+        max_tokens: 300,
+        temperature: 0.5,
       }),
     });
 
