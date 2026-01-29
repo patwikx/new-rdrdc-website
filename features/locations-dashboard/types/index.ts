@@ -250,6 +250,7 @@ export interface MapControlsProps {
   onLocateUser: () => void;
   fullscreenActive: boolean;
   currentStyle: MapStyle;
+  isLocating?: boolean;
 }
 
 /**

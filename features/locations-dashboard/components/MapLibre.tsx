@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { toast } from 'sonner';
 import { MapComponentProps, Property } from '../types';
 import { DEFAULT_MAP_CONFIG, PROPERTY_TYPE_LABELS } from '../constants';
 import { MapControls } from './MapControls';
@@ -65,6 +66,7 @@ export function MapLibre({
   const [isClient, setIsClient] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
 
   // Store route data to persist across style changes
   const routeDataRef = useRef<{
@@ -553,17 +555,31 @@ export function MapLibre({
    * Handle user location centering
    */
   const handleLocateUser = async () => {
+    if (isLocating) return; // Prevent multiple clicks
+
+    setIsLocating(true);
+
     try {
       const location = await getCurrentLocation();
       if (mapRef.current && location) {
+        setUserLocation(location);
         mapRef.current.flyTo({
           center: [location.lng, location.lat],
           zoom: 15,
           essential: true,
         });
+        toast.success('Location found!', {
+          description: 'Map centered on your current location.',
+        });
       }
     } catch (error) {
       console.error('Failed to get user location:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unable to get your location';
+      toast.error('Location error', {
+        description: errorMessage,
+      });
+    } finally {
+      setIsLocating(false);
     }
   };
 
@@ -593,6 +609,7 @@ export function MapLibre({
         onLocateUser={handleLocateUser}
         fullscreenActive={isFullscreen}
         currentStyle={mapStyle}
+        isLocating={isLocating}
       />
 
       <style jsx global>{`

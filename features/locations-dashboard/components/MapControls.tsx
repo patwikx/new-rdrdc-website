@@ -22,6 +22,7 @@ import {
   Map,
   Mountain,
   Satellite,
+  Loader2,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -74,6 +75,7 @@ export function MapControls({
   onLocateUser,
   fullscreenActive,
   currentStyle,
+  isLocating,
 }: MapControlsProps) {
   const handleStyleChange = (style: MapStyle) => {
     onStyleChange(style);
@@ -126,10 +128,20 @@ export function MapControls({
         {/* Locate User */}
         <button
           onClick={onLocateUser}
-          className="w-11 h-11 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 shadow-xl hover:bg-black/95 hover:scale-110 hover:shadow-2xl active:scale-95 transition-all duration-200 flex items-center justify-center group"
-          title="Center on my location"
+          disabled={isLocating}
+          className={cn(
+            "w-11 h-11 rounded-lg bg-black/80 backdrop-blur-xl border border-white/10 shadow-xl transition-all duration-200 flex items-center justify-center group",
+            isLocating
+              ? "opacity-80 cursor-wait"
+              : "hover:bg-black/95 hover:scale-110 hover:shadow-2xl active:scale-95"
+          )}
+          title={isLocating ? "Getting your location..." : "Center on my location"}
         >
-          <Locate className="h-5 w-5 text-white group-hover:text-blue-400 transition-colors duration-200" />
+          {isLocating ? (
+            <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
+          ) : (
+            <Locate className="h-5 w-5 text-white group-hover:text-blue-400 transition-colors duration-200" />
+          )}
         </button>
 
         {/* Reset View */}

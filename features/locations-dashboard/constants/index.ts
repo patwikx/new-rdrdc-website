@@ -5,16 +5,17 @@
 import { MapConfiguration } from '../types';
 
 /**
- * Default map configuration for General Santos City
+ * Default map configuration for Philippines-wide view
+ * Centered to show properties from Manila to Mindanao
  */
 export const DEFAULT_MAP_CONFIG: MapConfiguration = {
   defaultCenter: {
-    lat: 6.1164,
-    lng: 125.1716,
+    lat: 8.5,  // Centered between Manila and Mindanao
+    lng: 124.5,
   },
-  defaultZoom: 13,
+  defaultZoom: 6,  // Zoomed out to show all properties
   maxZoom: 18,
-  minZoom: 10,
+  minZoom: 4,
   clusterDistance: 50,
   tileLayerUrls: {
     street: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
