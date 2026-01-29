@@ -410,7 +410,7 @@ export function MapLibre({
 
   // Fetch and render route from OSRM
   useEffect(() => {
-    if (!routeDestinationId || !userLocation) {
+    if (!routeDestinationId) {
       routeDataRef.current = null;
       return;
     }
@@ -422,7 +422,27 @@ export function MapLibre({
     }
 
     const fetchRoute = async () => {
-      const start = `${userLocation.lng},${userLocation.lat}`;
+      // Get user location if not already available
+      let currentLocation = userLocation;
+
+      if (!currentLocation) {
+        try {
+          toast.loading('Getting your location for directions...', { id: 'route-location' });
+          currentLocation = await getCurrentLocation();
+          setUserLocation(currentLocation);
+          toast.success('Location found!', { id: 'route-location' });
+        } catch (error) {
+          console.error('Failed to get location for route:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Unable to get your location';
+          toast.error('Cannot get directions', {
+            id: 'route-location',
+            description: errorMessage + '. Please click the locate button first.',
+          });
+          return;
+        }
+      }
+
+      const start = `${currentLocation.lng},${currentLocation.lat}`;
       const end = `${destination.coordinates.lng},${destination.coordinates.lat}`;
 
       try {
@@ -434,7 +454,7 @@ export function MapLibre({
         if (data.routes && data.routes[0]) {
           const coordinates = data.routes[0].geometry.coordinates as [number, number][];
           const bounds = new maplibregl.LngLatBounds();
-          bounds.extend([userLocation.lng, userLocation.lat]);
+          bounds.extend([currentLocation.lng, currentLocation.lat]);
           bounds.extend([destination.coordinates.lng, destination.coordinates.lat]);
           coordinates.forEach((coord) => bounds.extend(coord));
 
@@ -449,11 +469,14 @@ export function MapLibre({
         }
       } catch (error) {
         console.error('Failed to fetch route:', error);
+        toast.error('Failed to fetch directions', {
+          description: 'Please try again later.',
+        });
       }
     };
 
     fetchRoute();
-  }, [routeDestinationId, userLocation, properties, drawRoute]);
+  }, [routeDestinationId, userLocation, properties, drawRoute, getCurrentLocation]);
 
   // Clear route when destination is removed
   useEffect(() => {
