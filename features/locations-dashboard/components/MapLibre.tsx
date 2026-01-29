@@ -168,9 +168,8 @@ export function MapLibre({
         const map = mapRef.current;
         if (!map) return;
 
-        // Calculate zoom delta - normalize scroll speed for natural zooming
-        // Trackpads produce smaller deltaY values, so we use a higher multiplier
-        const zoomSpeed = 0.05;
+        // Calculate zoom delta - use a lower multiplier for smoother, controlled zooming
+        const zoomSpeed = 0.01;
         const delta = -e.deltaY * zoomSpeed;
         const currentZoom = map.getZoom();
         const newZoom = Math.max(
@@ -178,7 +177,7 @@ export function MapLibre({
           Math.min(DEFAULT_MAP_CONFIG.maxZoom, currentZoom + delta)
         );
 
-        map.zoomTo(newZoom, { duration: 150 });
+        map.zoomTo(newZoom, { duration: 200 });
       }
     };
 
@@ -236,23 +235,32 @@ export function MapLibre({
     };
 
     return `
-      <div class="location-popup" style="min-width: 220px; max-width: 280px; padding: 12px; color: #fff;">
-        <div class="popup-header" style="margin-bottom: 2px;">
-          <div class="popup-title-section">
-            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 2px 0; line-height: 1.3;">${property.title}</h3>
+      <div class="location-popup" style="min-width: 220px; max-width: 280px; padding: 0; color: #fff; overflow: hidden; border-radius: 12px; background: #18181b;">
+        ${property.images && property.images.length > 0
+        ? `<div style="width: 100%; height: 140px; overflow: hidden; position: relative;">
+               <img src="${property.images[0]}" alt="${property.title}" style="width: 100%; height: 100%; object-fit: cover;" />
+               <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 100%);"></div>
+             </div>`
+        : ''}
+        
+        <div style="padding: 12px;">
+          <div class="popup-header" style="margin-bottom: 2px;">
+            <div class="popup-title-section">
+              <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 2px 0; line-height: 1.3;">${property.title}</h3>
+            </div>
           </div>
-        </div>
-        
-        <p style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #a1a1aa; margin-bottom: 8px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          ${property.address}
-        </p>
-        
-        <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 10px;">
-          <span style="color: #71717a;">Listed ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          
+          <p style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #a1a1aa; margin-bottom: 8px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            ${property.address}
+          </p>
+          
+          <div style="display: flex; align-items: center; justify-content: flex-end; font-size: 10px;">
+            <span style="color: #71717a;">Listed ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+          </div>
         </div>
       </div>
     `;
@@ -539,12 +547,7 @@ export function MapLibre({
   /**
    * Handle map style toggle
    */
-  const handleToggleStyle = () => {
-    const styles: Array<'street' | 'satellite' | 'hybrid'> = ['street', 'satellite', 'hybrid'];
-    const currentIndex = styles.indexOf(mapStyle);
-    const nextIndex = (currentIndex + 1) % styles.length;
-    onStyleChange(styles[nextIndex]);
-  };
+
 
   /**
    * Handle user location centering
@@ -586,7 +589,7 @@ export function MapLibre({
         onZoomOut={handleZoomOut}
         onResetView={handleResetView}
         onToggleFullscreen={toggleFullscreen}
-        onToggleStyle={handleToggleStyle}
+        onStyleChange={onStyleChange}
         onLocateUser={handleLocateUser}
         fullscreenActive={isFullscreen}
         currentStyle={mapStyle}

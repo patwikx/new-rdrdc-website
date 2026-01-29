@@ -31,6 +31,7 @@ export function LocationsMapWithList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [filterByBounds, setFilterByBounds] = useState(false);
+  const [mapStyle, setMapStyle] = useState<'street' | 'satellite' | 'hybrid'>('street');
   const [viewport, setViewport] = useState({
     center: DEFAULT_MAP_CONFIG.defaultCenter,
     zoom: DEFAULT_MAP_CONFIG.defaultZoom,
@@ -198,8 +199,8 @@ export function LocationsMapWithList() {
               onViewportChange={handleViewportChange}
               selectedProperty={selectedProperty}
               onPropertySelect={setSelectedProperty}
-              mapStyle="street"
-              onStyleChange={() => { }}
+              mapStyle={mapStyle}
+              onStyleChange={setMapStyle}
               routeDestinationId={routeDestinationId}
             />
           </QueryProvider>

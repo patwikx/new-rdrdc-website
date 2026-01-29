@@ -246,7 +246,7 @@ export interface MapControlsProps {
   onZoomOut: () => void;
   onResetView: () => void;
   onToggleFullscreen: () => void;
-  onToggleStyle: () => void;
+  onStyleChange: (style: MapStyle) => void;
   onLocateUser: () => void;
   fullscreenActive: boolean;
   currentStyle: MapStyle;
@@ -304,7 +304,7 @@ export interface ApplicationState {
     style: MapStyle;
     fullscreen: boolean;
   };
-  
+
   // Data State
   properties: {
     all: Property[];
@@ -312,7 +312,7 @@ export interface ApplicationState {
     loading: boolean;
     error: string | null;
   };
-  
+
   // User State
   favorites: {
     items: Property[];
@@ -322,7 +322,7 @@ export interface ApplicationState {
     locations: RecentLocation[];
     searches: SearchHistoryItem[];
   };
-  
+
   // Filter State
   filters: PropertyFilters;
   search: {

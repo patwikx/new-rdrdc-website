@@ -13,7 +13,7 @@
  * Requirements: 5.1, 5.2, 5.5
  */
 
-import { 
+import {
   Plus,
   Minus,
   Locate,
@@ -70,14 +70,13 @@ export function MapControls({
   onZoomOut,
   onResetView,
   onToggleFullscreen,
-  onToggleStyle,
+  onStyleChange,
   onLocateUser,
   fullscreenActive,
   currentStyle,
 }: MapControlsProps) {
   const handleStyleChange = (style: MapStyle) => {
-    // Call onToggleStyle until we reach the desired style
-    onToggleStyle();
+    onStyleChange(style);
   };
 
   return (
@@ -93,8 +92,8 @@ export function MapControls({
               <Layers className="h-5 w-5 text-white group-hover:text-blue-400 transition-colors duration-200" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            align="end" 
+          <DropdownMenuContent
+            align="end"
             className="w-48 bg-black/95 backdrop-blur-xl border-white/10"
           >
             {mapStyles.map((style) => {
