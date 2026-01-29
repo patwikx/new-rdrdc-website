@@ -62,28 +62,6 @@ export default function HomePage() {
                            The Realty Development Group is engaged in the development of commercial, residential, and industrial projects, property management, and construction of many of the company’s future developments.
                         </p>
                      </motion.div>
-
-                     {/* Stats/Group Grid */}
-                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-zinc-800"
-                     >
-                        <div>
-                           <p className="text-3xl font-bold text-white mb-1">45k+</p>
-                           <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">SQM Leasable</p>
-                        </div>
-                        <div>
-                           <p className="text-3xl font-bold text-white mb-1">1985</p>
-                           <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">Established</p>
-                        </div>
-                        <div>
-                           <p className="text-3xl font-bold text-white mb-1">200+</p>
-                           <p className="text-xs uppercase tracking-widest text-zinc-500 font-bold">Tenants</p>
-                        </div>
-                     </motion.div>
                   </div>
                </div>
             </div>

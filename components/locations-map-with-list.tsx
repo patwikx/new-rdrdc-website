@@ -179,7 +179,7 @@ export function LocationsMapWithList() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-4xl md:text-6xl font-bold tracking-tighter mb-4"
           >
-            OUR LOCATIONS
+            OUR PROPERTIES
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -409,8 +409,8 @@ export function LocationsMapWithList() {
                             onClick={() => handleGenerateRoute(selectedProperty)}
                             disabled={isGeneratingRoute}
                             className={`flex-1 flex items-center justify-center gap-2 text-white rounded-lg px-3 py-2.5 text-xs font-semibold transition-all duration-200 ${isGeneratingRoute
-                                ? 'bg-blue-500/70 cursor-wait'
-                                : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
+                              ? 'bg-blue-500/70 cursor-wait'
+                              : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
                               }`}
                           >
                             {isGeneratingRoute ? (
