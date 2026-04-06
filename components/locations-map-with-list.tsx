@@ -170,7 +170,7 @@ export function LocationsMapWithList() {
 
   return (
     <section className="bg-zinc-950 text-white pt-24 pb-0 overflow-hidden">
-      <div className="container mx-auto px-6 mb-12">
+      <div className="container max-w-6xl mx-auto px-6 mb-12">
         <div className="text-center max-w-2xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 50 }}
@@ -344,46 +344,30 @@ export function LocationsMapWithList() {
                     className="overflow-hidden"
                   >
                     <div className="bg-black/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-blue-500/30 overflow-hidden">
-                      {/* Close Button */}
-                      <button
-                        onClick={() => {
-                          setSelectedProperty(null);
-                          setRouteDestinationId(null);
-                        }}
-                        className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-black/80 transition-all"
-                      >
-                        <X className="w-4 h-4 text-white" />
-                      </button>
-
-                      {/* Property Image */}
-                      {(() => {
-                        const originalIndex = properties.findIndex(p => p.id === selectedProperty.id);
-                        const originalProp = originalProperties[originalIndex];
-                        return originalProp?.images && originalProp.images.length > 0 && (
-                          <div className="relative w-full h-40 overflow-hidden">
-                            <img
-                              src={originalProp.images[0]}
-                              alt={selectedProperty.title}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                            <span className={`absolute bottom-3 left-3 px-2 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wide border ${getPropertyTypeBadgeColor(selectedProperty.type)}`}>
-                              {PROPERTY_TYPE_LABELS[selectedProperty.type]}
-                            </span>
-                          </div>
-                        );
-                      })()}
-
                       {/* Property Details */}
                       <div className="p-4 space-y-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-white leading-tight mb-1">
-                            {selectedProperty.title}
-                          </h3>
-                          <p className="text-xs text-zinc-400 flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {selectedProperty.address}
-                          </p>
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide border mb-2 ${getPropertyTypeBadgeColor(selectedProperty.type)}`}>
+                              {PROPERTY_TYPE_LABELS[selectedProperty.type]}
+                            </span>
+                            <h3 className="text-lg font-bold text-white leading-tight mb-1">
+                              {selectedProperty.title}
+                            </h3>
+                            <p className="text-xs text-zinc-400 flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {selectedProperty.address}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedProperty(null);
+                              setRouteDestinationId(null);
+                            }}
+                            className="w-7 h-7 rounded-lg bg-zinc-800 flex items-center justify-center hover:bg-zinc-700 transition-all shrink-0"
+                          >
+                            <X className="w-3.5 h-3.5 text-zinc-400" />
+                          </button>
                         </div>
 
                         {/* Specs */}
@@ -488,35 +472,35 @@ export function LocationsMapWithList() {
                               }`}
                           >
                             <div className="flex items-start gap-3">
-                              {/* Thumbnail */}
-                              {originalProp?.images && originalProp.images.length > 0 && (
-                                <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                                  <img
-                                    src={originalProp.images[0]}
-                                    alt={property.title}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              )}
+                              {/* Checkbox */}
+                              <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${isSelected
+                                ? 'bg-blue-500 border-blue-500'
+                                : 'border-zinc-600 group-hover:border-zinc-400'
+                              }`}>
+                                {isSelected && (
+                                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start justify-between gap-2 mb-1">
-                                  <h4 className={`text-sm font-semibold leading-tight line-clamp-1 transition-colors ${isSelected ? 'text-white' : 'text-zinc-100 group-hover:text-white'
+                                  <h4 className={`text-sm font-bold leading-tight line-clamp-1 transition-colors ${isSelected ? 'text-white' : 'text-zinc-100 group-hover:text-white'
                                     }`}>
                                     {property.title}
                                   </h4>
-                                </div>
-                                <p className={`text-xs mb-1 line-clamp-1 transition-colors ${isSelected ? 'text-zinc-200' : 'text-zinc-400 group-hover:text-zinc-300'
-                                  }`}>
-                                  {property.address}
-                                </p>
-                                <div className="flex items-center gap-2">
-                                  <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide border ${getPropertyTypeBadgeColor(property.type)}`}>
-                                    {PROPERTY_TYPE_LABELS[property.type]}
-                                  </span>
-                                  <span className="text-[10px] text-zinc-500">
+                                  <span className="text-[10px] text-zinc-500 shrink-0 mt-0.5">
                                     {originalProp?.specs.sqm || 'N/A'}
                                   </span>
                                 </div>
+                                <p className={`text-xs mb-2 flex items-center gap-1.5 line-clamp-1 transition-colors ${isSelected ? 'text-zinc-200' : 'text-zinc-400 group-hover:text-zinc-300'
+                                  }`}>
+                                  <MapPin className="w-3 h-3 shrink-0" />
+                                  {property.address}
+                                </p>
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide border ${getPropertyTypeBadgeColor(property.type)}`}>
+                                  {PROPERTY_TYPE_LABELS[property.type]}
+                                </span>
                               </div>
                             </div>
                           </button>

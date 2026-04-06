@@ -37,7 +37,7 @@ export function TenantTicker() {
 
     return (
         <section className="py-32 bg-zinc-950 overflow-hidden border-y border-zinc-900">
-            <div className="container mx-auto px-6 mb-20 text-center">
+            <div className="container max-w-6xl mx-auto px-6 mb-20 text-center">
                 <motion.h3
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}

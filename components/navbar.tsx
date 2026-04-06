@@ -49,7 +49,7 @@ export function Navbar() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-10">
-          {["About", "Leasing", "Properties", "Contact"].map((item) => (
+          {["About", "Leasing", "Properties", "Careers", "Contact"].map((item) => (
             <Link
               key={item}
               href={`/${item.toLowerCase()}`}
@@ -64,7 +64,7 @@ export function Navbar() {
         <div className="flex items-center gap-6">
           <Button
             asChild
-            className="rounded-none bg-white text-black hover:bg-zinc-200 px-8 h-12 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 shadow-lg shadow-black/20"
+            className="rounded-none bg-white text-black hover:bg-zinc-200 px-5 h-9 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 shadow-lg shadow-black/20"
           >
             <Link href="/contact">Inquire Now</Link>
           </Button>
